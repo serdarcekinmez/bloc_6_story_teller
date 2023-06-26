@@ -1,0 +1,10 @@
+fastapi 
+uvicorn[standard]
+python-multipart
+fsspec
+s3fs
+torch
+transformers
+accelerate
+bitsandbytes
+pandas

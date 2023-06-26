@@ -1,0 +1,58 @@
+version: '3'
+
+services:
+  story-gen-api:
+    image: nizarsayad/fastapi_gen:latest
+    #ports:
+    #  - 8001:80
+    #volumes:
+    #  - ./02-generator-endpoint:/home/app
+    environment:
+      - TRANSFORMER_CACHE=/home/app
+    #secrets:
+    #  - my_secrets
+    restart: always
+
+  ranking-api:
+    image: nizarsayad/fastapi_rank:latest
+    #ports:
+    #  - 8002:80
+    #volumes:
+    #  - ./03-ranker-endpoint:/home/app
+    depends_on:
+      - story-gen-api
+    environment:
+      - TRANSFORMER_CACHE=/home/app
+    #secrets:
+    #  - my_secrets
+    restart: always
+
+  sentiment-api:
+    image: nizarsayad/fastapi_sentiment:latest
+    #ports:
+    #  - 8003:80
+    #volumes:
+    #  - ./04-sentiment-endpoint:/home/app
+    depends_on:
+      - story-gen-api
+    environment:
+      - TRANSFORMER_CACHE=/home/app
+    #secrets:
+    #  - my_secrets
+    restart: always
+
+  streamlit-app:
+    image: nizarsayad/story_webapp:latest
+    ports:
+      - 80:8000
+    #volumes:
+    #  - ./05-story-app:/home/app
+    depends_on:
+      - story-gen-api
+      - sentiment-api
+      - ranking-api
+    restart: always
+
+#secrets:
+#  my_secrets:
+#    file: ./secrets.txt
